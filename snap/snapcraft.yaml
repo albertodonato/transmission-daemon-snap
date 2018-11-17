@@ -1,0 +1,84 @@
+name: transmission-daemon
+version: '2.94'
+summary: Lightweight BitTorrent client with CLI and web-based interface
+description: |
+  Lightweight BitTorrent client with CLI and web-based interface.
+  
+  The snap contains the daemon with web interface and API, as well as CLI
+  tools.
+
+  Available config keys:
+    - port:            listen port [9091]
+    - dirs.downloads:  directory where files are downloaded
+        [/var/snap/transmission-deamon/common/downloads]
+    - dirs.watch:      directory to watch for torrent files [unset]
+base: core18
+grade: stable
+confinement: strict
+
+apps:
+  daemon:
+    command: wrappers/daemon
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - removable-media
+  remote:
+    command: wrappers/remote
+    plugs:
+      - home
+      - network
+      - removable-media
+  create:
+    command: bin/transmission-create
+    plugs:
+      - home
+      - removable-media
+  edit:
+    command: bin/transmission-edit
+    plugs:
+      - home
+      - removable-media
+  show:
+    command: bin/transmission-show
+    plugs:
+      - home
+      - removable-media
+
+parts:
+  transmission-daemon:
+    plugin: autotools
+    source: https://github.com/transmission/transmission
+    source-type: git
+    source-tag: '2.94'
+    configflags:
+      - --disable-gtk
+      - --disable-cli
+      - --enable-daemon
+    build-packages: 
+      - libcurl4-gnutls-dev
+      - libevent-dev
+      - zlib1g-dev
+      - libssl-dev
+      - intltool
+      - libglib2.0-dev
+      - libminiupnpc-dev
+    stage-packages:
+      - libcurl3
+      - libcurl3-gnutls
+      - libevent-2.1-6
+      - libminiupnpc10
+      # for configuration scripts
+      - jq
+      - libjq1
+    stage:
+      - bin
+      - lib
+      - share/transmission
+      - usr/bin
+      - usr/lib
+
+  local:
+    plugin: dump
+    source: .
