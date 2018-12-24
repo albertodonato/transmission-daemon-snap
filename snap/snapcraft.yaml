@@ -12,6 +12,7 @@ description: |
     - dirs.downloads:  directory where files are downloaded
         [/var/snap/transmission-deamon/common/downloads]
     - dirs.watch:      directory to watch for torrent files [unset]
+icon: icon.png
 base: core18
 grade: stable
 confinement: strict
@@ -82,3 +83,7 @@ parts:
   local:
     plugin: dump
     source: .
+    stage:
+      - wrappers
+    prime:
+      - wrappers
